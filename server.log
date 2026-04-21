@@ -1,0 +1,117 @@
+
+> Configure project :composeApp
+WARNING: The option setting 'android.usesSdkInManifest.disallowed=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.sdk.defaultTargetSdkToCompileSdkIfUnset=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.enableAppCompileTimeRClass=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.builtInKotlin=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.newDsl=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.r8.optimizedResourceShrinking=false' is deprecated.
+The current default is 'true'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The option setting 'android.defaults.buildfeatures.resvalues=true' is deprecated.
+The current default is 'false'.
+It will be removed in version 10.0 of the Android Gradle plugin.
+WARNING: The property android.dependency.excludeLibraryComponentsFromConstraints improves project import performance for very large projects. It should be enabled to improve performance.
+To suppress this warning, add android.generateSyncIssueWhenLibraryConstraintsAreEnabled=false to gradle.properties
+WARNING: The property android.dependency.excludeLibraryComponentsFromConstraints improves project import performance for very large projects. It should be enabled to improve performance.
+To suppress this warning, add android.generateSyncIssueWhenLibraryConstraintsAreEnabled=false to gradle.properties
+WARNING: The property android.dependency.excludeLibraryComponentsFromConstraints improves project import performance for very large projects. It should be enabled to improve performance.
+To suppress this warning, add android.generateSyncIssueWhenLibraryConstraintsAreEnabled=false to gradle.properties
+WARNING: The property android.dependency.excludeLibraryComponentsFromConstraints improves project import performance for very large projects. It should be enabled to improve performance.
+To suppress this warning, add android.generateSyncIssueWhenLibraryConstraintsAreEnabled=false to gradle.properties
+w: ⚠️ The 'org.jetbrains.kotlin.multiplatform' plugin deprecated compatibility with Android Gradle plugin: 'com.android.application'
+The 'org.jetbrains.kotlin.multiplatform' plugin is not compatible with 'com.android.application' starting with Android Gradle Plugin 9.0.0.
+
+Please change the structure of the your project and move the usage of 'com.android.application' into a separate subproject. The new subproject should add a dependency on this KMP subproject.
+
+Read more: https://kotl.in/kmp-project-structure-migration
+Solution: Please change the structure of your project and move the usage of 'com.android.application' into a separate subproject.
+See https://kotl.in/gradle/agp-new-kmp for more details.
+
+
+> Task :backend:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :backend:compileKotlin UP-TO-DATE
+> Task :backend:compileJava NO-SOURCE
+> Task :backend:processResources UP-TO-DATE
+> Task :backend:classes UP-TO-DATE
+
+> Task :backend:run
+20:23:34.660 [main] INFO com.voicenova.Application -- Starting VoiceNova AI Agent v1.0 on port 8080
+20:23:34.839 [main] INFO io.ktor.server.Application -- Autoreload is disabled because the development mode is off.
+20:23:34.918 [main] INFO [Koin] -- Started 12 definitions in 2.332 ms
+20:23:35.000 [main] INFO io.ktor.server.Application -- Monitoring configured.
+20:23:35.076 [main] INFO com.voicenova.services.TrainingService -- Loaded 1 HR candidate profiles from /Users/bcsn-ishants/Desktop/voicenova-agent/./storage/runtime/hr-candidates.json
+20:23:35.079 [main] INFO com.voicenova.services.TrainingService -- Loaded 1 contacts from /Users/bcsn-ishants/Desktop/voicenova-agent/./storage/runtime/contacts.json
+20:23:35.132 [main] WARN com.voicenova.services.TrainingService -- Could not ensure hr_candidates table: The connection attempt failed.
+20:23:35.132 [main] WARN com.voicenova.services.TrainingService -- Could not ensure contacts table: The connection attempt failed.
+20:23:35.134 [main] WARN com.voicenova.services.HrCallService -- Could not ensure HR call tables: The connection attempt failed.
+20:23:35.171 [main] INFO io.ktor.server.Application -- Application started in 0.477 seconds.
+20:23:35.171 [main] INFO com.voicenova.services.TrainingService -- Loading knowledge base from: /Users/bcsn-ishants/Desktop/voicenova-agent/./knowledge
+20:23:35.174 [main] INFO com.voicenova.services.TrainingService -- Agent config loaded: name=Minsha, company=Chaintech
+20:23:35.182 [main] INFO com.voicenova.services.TrainingService -- Loaded: ./knowledge/products/catalog.md → 1 chunks
+20:23:35.184 [main] INFO com.voicenova.services.TrainingService -- Loaded: ./knowledge/faq/common-questions.md → 2 chunks
+20:23:35.185 [main] INFO com.voicenova.services.TrainingService -- Loaded: ./knowledge/scripts/call-flows.md → 1 chunks
+20:23:35.186 [main] INFO com.voicenova.services.TrainingService -- Loaded: ./knowledge/scripts/human-interaction.md → 2 chunks
+20:23:35.187 [main] INFO com.voicenova.services.TrainingService -- Loaded: ./knowledge/company/about.md → 1 chunks
+20:23:35.191 [main] INFO com.voicenova.services.TrainingService -- Knowledge base ready: 9 total chunks from 7 files
+20:23:35.191 [main] INFO io.ktor.server.Application -- Knowledge base loaded. Agent is ready.
+20:23:35.196 [main] DEBUG io.netty.util.internal.logging.InternalLoggerFactory -- Using SLF4J as the default logging framework
+20:23:35.203 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- Java version: 21
+20:23:35.203 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- -Dio.netty.noUnsafe: false
+20:23:35.205 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- sun.misc.Unsafe.theUnsafe: available
+20:23:35.205 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- sun.misc.Unsafe base methods: all available
+20:23:35.206 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- java.nio.Buffer.address: available
+20:23:35.206 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- direct buffer constructor: unavailable: Reflective setAccessible(true) disabled
+20:23:35.206 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- java.nio.Bits.unaligned: available, true
+20:23:35.206 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- jdk.internal.misc.Unsafe.allocateUninitializedArray(int): unavailable: symbolic reference class is not accessible: class jdk.internal.misc.Unsafe, from class io.netty.util.internal.PlatformDependent0 (unnamed module @17aad511)
+20:23:35.207 [main] DEBUG io.netty.util.internal.PlatformDependent0 -- java.nio.DirectByteBuffer.<init>(long, {int,long}): unavailable
+20:23:35.207 [main] DEBUG io.netty.util.internal.PlatformDependent -- sun.misc.Unsafe: available
+20:23:35.207 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.tmpdir: /var/folders/ws/_vd2_yy96kd50nhzbfvx1zrh0000gp/T (java.io.tmpdir)
+20:23:35.207 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.bitMode: 64 (sun.arch.data.model)
+20:23:35.207 [main] DEBUG io.netty.util.internal.PlatformDependent -- Platform: MacOS
+20:23:35.207 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.maxDirectMemory: -1 bytes
+20:23:35.208 [main] DEBUG io.netty.util.internal.CleanerJava9 -- java.nio.ByteBuffer.cleaner(): available
+20:23:35.208 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.noPreferDirect: false
+20:23:35.211 [main] DEBUG io.netty.util.internal.PlatformDependent -- -Dio.netty.jfr.enabled: true
+20:23:35.213 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.workdir: /var/folders/ws/_vd2_yy96kd50nhzbfvx1zrh0000gp/T (io.netty.tmpdir)
+20:23:35.213 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.deleteLibAfterLoading: true
+20:23:35.213 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.tryPatchShadedId: true
+20:23:35.213 [main] DEBUG io.netty.util.internal.NativeLibraryLoader -- -Dio.netty.native.detectNativeLibraryDuplicates: true
+20:23:35.224 [main] DEBUG io.netty.channel.kqueue.KQueue -- KQueue support is not available: could not load a native library: netty_transport_native_kqueue_aarch_64
+20:23:35.227 [main] DEBUG io.netty.channel.epoll.Epoll -- Epoll support is not available: null
+20:23:35.232 [main] DEBUG io.netty.channel.MultithreadEventLoopGroup -- -Dio.netty.eventLoopThreads: 16
+20:23:35.233 [main] DEBUG io.netty.channel.nio.NioIoHandler -- -Dio.netty.noKeySetOptimization: false
+20:23:35.233 [main] DEBUG io.netty.channel.nio.NioIoHandler -- -Dio.netty.selectorAutoRebuildThreshold: 512
+20:23:35.237 [main] DEBUG io.netty.util.concurrent.GlobalEventExecutor -- -Dio.netty.globalEventExecutor.quietPeriodSeconds: 1
+20:23:35.240 [main] DEBUG io.netty.util.internal.InternalThreadLocalMap -- -Dio.netty.threadLocalMap.stringBuilder.initialSize: 1024
+20:23:35.240 [main] DEBUG io.netty.util.internal.InternalThreadLocalMap -- -Dio.netty.threadLocalMap.stringBuilder.maxSize: 4096
+20:23:35.244 [main] DEBUG io.netty.util.internal.PlatformDependent -- org.jctools-core.MpscChunkedArrayQueue: available
+20:23:35.262 [main] DEBUG io.netty.channel.DefaultChannelId -- -Dio.netty.processId: 5946 (auto-detected)
+20:23:35.264 [main] DEBUG io.netty.util.NetUtil -- -Djava.net.preferIPv4Stack: false
+20:23:35.264 [main] DEBUG io.netty.util.NetUtil -- -Djava.net.preferIPv6Addresses: false
+20:23:35.267 [main] DEBUG io.netty.util.NetUtilInitializations -- Loopback interface: lo0 (lo0, 0:0:0:0:0:0:0:1%lo0)
+20:23:35.268 [main] DEBUG io.netty.util.NetUtil -- Failed to get SOMAXCONN from sysctl and file /proc/sys/net/core/somaxconn. Default: 128
+20:23:35.269 [main] DEBUG io.netty.channel.DefaultChannelId -- -Dio.netty.machineId: 96:3d:93:ff:fe:dd:0e:ea (auto-detected)
+20:23:35.278 [main] DEBUG io.netty.util.ResourceLeakDetector -- -Dio.netty.leakDetection.level: simple
+20:23:35.278 [main] DEBUG io.netty.util.ResourceLeakDetector -- -Dio.netty.leakDetection.targetRecords: 4
+20:23:35.290 [main] DEBUG io.netty.buffer.AdaptiveByteBufAllocator -- -Dio.netty.allocator.useCachedMagazinesForNonEventLoopThreads: false
+20:23:35.297 [main] DEBUG io.netty.util.Recycler -- -Dio.netty.recycler.maxCapacityPerThread: 4096
+20:23:35.297 [main] DEBUG io.netty.util.Recycler -- -Dio.netty.recycler.ratio: 8
+20:23:35.297 [main] DEBUG io.netty.util.Recycler -- -Dio.netty.recycler.chunkSize: 32
+20:23:35.297 [main] DEBUG io.netty.util.Recycler -- -Dio.netty.recycler.blocking: false
+20:23:35.297 [main] DEBUG io.netty.util.Recycler -- -Dio.netty.recycler.batchFastThreadLocalOnly: true
+20:23:35.300 [main] DEBUG io.netty.buffer.ByteBufUtil -- -Dio.netty.allocator.type: adaptive
+20:23:35.300 [main] DEBUG io.netty.buffer.ByteBufUtil -- -Dio.netty.threadLocalDirectBufferSize: 0
+20:23:35.300 [main] DEBUG io.netty.buffer.ByteBufUtil -- -Dio.netty.maxThreadLocalCharBufferSize: 16384
+20:23:35.301 [main] DEBUG io.netty.bootstrap.ChannelInitializerExtensions -- -Dio.netty.bootstrap.extensions: null
+20:23:35.310 [DefaultDispatcher-worker-1] INFO io.ktor.server.Application -- Responding at http://0.0.0.0:8080
