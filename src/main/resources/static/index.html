@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoiceNova — Dashboard</title>
+<style>
+  :root {
+    --bg: #04030A; --bg2: #0D0B24; --bg3: #13114A;
+    --cyan: #00E5FF; --purple: #8B5CF6; --pink: #EC4899;
+    --green: #10B981; --amber: #F59E0B; --red: #EF4444;
+    --text: #F0EEFF; --muted: #7B7A9E; --border: rgba(139,92,246,0.2);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', system-ui, sans-serif; font-size: 14px; }
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=Syne:wght@600;700;800&display=swap');
+
+  /* Layout */
+  .layout { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+  .sidebar { background: var(--bg2); border-right: 1px solid var(--border); padding: 1.5rem 1rem; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; }
+  .main { padding: 2rem; overflow-y: auto; }
+
+  /* Sidebar */
+  .logo { display: flex; align-items: center; gap: 10px; padding: 8px 12px; margin-bottom: 1.5rem; }
+  .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, var(--cyan), var(--purple)); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .logo-name { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; }
+  .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; cursor: pointer; color: var(--muted); transition: all 0.15s; font-size: 13px; font-weight: 500; border: none; background: none; width: 100%; text-align: left; }
+  .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+  .nav-item.active { background: rgba(139,92,246,0.15); color: var(--text); }
+  .nav-item .icon { font-size: 16px; flex-shrink: 0; }
+  .sidebar-spacer { flex: 1; }
+  .status-pill { display: flex; align-items: center; gap: 8px; background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); border-radius: 10px; padding: 10px 12px; font-size: 12px; }
+  .pulse-dot { width: 8px; height: 8px; background: var(--green); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(1.5)} }
+
+  /* Header */
+  .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+  .page-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; }
+  .page-sub { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .header-actions { display: flex; gap: 10px; align-items: center; }
+  .btn { padding: 8px 16px; border-radius: 100px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all 0.15s; }
+  .btn-primary { background: linear-gradient(135deg, var(--cyan), var(--purple)); color: #04030A; font-weight: 700; }
+  .btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+  .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  /* Cards */
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 1.25rem; }
+  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+  .card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+  .card-badge { font-size: 11px; padding: 3px 10px; border-radius: 100px; }
+  .badge-cyan { background: rgba(0,229,255,0.1); color: var(--cyan); border: 1px solid rgba(0,229,255,0.2); }
+  .badge-green { background: rgba(16,185,129,0.1); color: var(--green); }
+  .badge-amber { background: rgba(245,158,11,0.1); color: var(--amber); }
+
+  /* Metric cards */
+  .metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
+  .metric { padding: 1.25rem; border-radius: 14px; background: var(--bg2); border: 1px solid var(--border); }
+  .metric-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+  .metric-value { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; }
+  .metric-change { font-size: 11px; margin-top: 6px; }
+  .up { color: var(--green); } .down { color: var(--red); }
+  .metric-bar { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; margin-top: 10px; overflow: hidden; }
+  .metric-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+  /* Live calls table */
+  .grid-2 { display: grid; grid-template-columns: 1.4fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+  table { width: 100%; border-collapse: collapse; }
+  th { font-size: 11px; color: var(--muted); text-align: left; padding: 8px 12px; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.03); font-size: 13px; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+  .caller-cell { display: flex; align-items: center; gap: 10px; }
+  .caller-name { font-weight: 500; }
+  .caller-lang { font-size: 11px; color: var(--muted); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+  .type-chip { font-size: 11px; padding: 2px 8px; border-radius: 100px; font-weight: 500; }
+  .type-support { background: rgba(14,165,233,0.12); color: #38bdf8; }
+  .type-sales   { background: rgba(16,185,129,0.12); color: var(--green); }
+  .type-billing { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .timer { font-family: monospace; font-size: 13px; color: var(--cyan); }
+
+  /* Language chart */
+  .lang-list { display: flex; flex-direction: column; gap: 10px; }
+  .lang-row { display: flex; flex-direction: column; gap: 4px; }
+  .lang-meta { display: flex; justify-content: space-between; font-size: 12px; }
+  .lang-name { color: var(--text); }
+  .lang-pct { color: var(--muted); }
+  .lang-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+  .lang-fill { height: 100%; border-radius: 3px; transition: width 1.2s cubic-bezier(0.22,0.61,0.36,1); }
+
+  /* Test panel */
+  #test-panel { display: none; }
+  #test-panel.visible { display: block; }
+  .test-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .test-input { flex: 1; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 10px 14px; font-size: 13px; outline: none; font-family: inherit; }
+  .test-input:focus { border-color: rgba(139,92,246,0.5); }
+  .chat-box { background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; height: 280px; overflow-y: auto; padding: 12px; margin-bottom: 10px; font-size: 13px; line-height: 1.7; }
+  .msg-user { color: var(--muted); padding: 4px 0; }
+  .msg-user span { color: var(--text); background: rgba(255,255,255,0.05); border-radius: 8px; padding: 4px 10px; }
+  .msg-agent { color: var(--cyan); padding: 4px 0; }
+  .msg-agent span { color: var(--text); }
+  .msg-meta { font-size: 10px; color: rgba(255,255,255,0.3); margin-left: 8px; }
+  .lang-select { background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 10px; color: var(--text); padding: 10px 12px; font-size: 13px; font-family: inherit; cursor: pointer; }
+  .lang-select option { background: var(--bg2); }
+
+  /* Training panel */
+  #training-panel { display: none; }
+  #training-panel.visible { display: block; }
+  textarea.test-input { resize: vertical; min-height: 80px; }
+  .fact-item { padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+  .fact-q { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .fact-a { font-size: 13px; color: var(--text); }
+  .fact-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .fact-lang { font-size: 10px; color: rgba(139,92,246,0.8); }
+  .approve-btn { font-size: 11px; padding: 3px 12px; border-radius: 100px; background: rgba(16,185,129,0.15); color: var(--green); border: 1px solid rgba(16,185,129,0.3); cursor: pointer; }
+  .approve-btn.done { background: rgba(16,185,129,0.3); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* Loading animation for waveform */
+  .wave { display: flex; align-items: center; gap: 3px; height: 20px; }
+  .wave-b { width: 3px; background: var(--cyan); border-radius: 2px; animation: wv 1.2s ease-in-out infinite; }
+  .wave-b:nth-child(1){animation-delay:0s;height:6px} .wave-b:nth-child(2){animation-delay:.1s;height:12px}
+  .wave-b:nth-child(3){animation-delay:.2s;height:18px} .wave-b:nth-child(4){animation-delay:.3s;height:14px}
+  .wave-b:nth-child(5){animation-delay:.4s;height:8px}
+  @keyframes wv { 0%,100%{transform:scaleY(0.4)} 50%{transform:scaleY(1)} }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">🎙</div>
+      <span class="logo-name">VoiceNova</span>
+    </div>
+
+    <button class="nav-item active" onclick="showSection('dashboard')">
+      <span class="icon">📊</span> Dashboard
+    </button>
+    <button class="nav-item" onclick="showSection('test')">
+      <span class="icon">🧪</span> Test Agent
+    </button>
+    <button class="nav-item" onclick="showSection('training')">
+      <span class="icon">🧠</span> Training
+    </button>
+    <button class="nav-item" onclick="showSection('calls')">
+      <span class="icon">📞</span> Live Calls
+    </button>
+    <button class="nav-item" onclick="showSection('languages')">
+      <span class="icon">🌐</span> Languages
+    </button>
+
+    <div class="sidebar-spacer"></div>
+
+    <div class="status-pill">
+      <div class="pulse-dot"></div>
+      <div>
+        <div style="font-weight:600;color:#10B981;font-size:12px">All Systems Online</div>
+        <div style="color:var(--muted);font-size:10px" id="uptime-text">Uptime: --</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- DASHBOARD SECTION -->
+    <div id="section-dashboard">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub" id="last-refresh">Loading...</div>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-ghost" onclick="refreshData()">↻ Refresh</button>
+          <button class="btn btn-primary" onclick="showSection('test')">+ Test Call</button>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="metrics" id="metrics-row">
+        <div class="metric">
+          <div class="metric-label">Active Calls</div>
+          <div class="metric-value" style="background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="m-active">—</div>
+          <div class="metric-change up">● Live now</div>
+          <div class="metric-bar"><div class="metric-fill" id="mf-active" style="background:var(--cyan);width:0%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Total Calls Today</div>
+          <div class="metric-value" style="background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="m-today">—</div>
+          <div class="metric-change up" id="m-today-change">+0%</div>
+          <div class="metric-bar"><div class="metric-fill" id="mf-today" style="background:var(--purple);width:0%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Context Chunks</div>
+          <div class="metric-value" style="background:linear-gradient(135deg,var(--pink),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="m-chunks">—</div>
+          <div class="metric-change" id="m-docs" style="color:var(--muted)">from 0 docs</div>
+          <div class="metric-bar"><div class="metric-fill" id="mf-chunks" style="background:var(--pink);width:0%"></div></div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Learned Facts</div>
+          <div class="metric-value" style="background:linear-gradient(135deg,var(--green),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent" id="m-facts">—</div>
+          <div class="metric-change up">From past calls</div>
+          <div class="metric-bar"><div class="metric-fill" id="mf-facts" style="background:var(--green);width:30%"></div></div>
+        </div>
+      </div>
+
+      <!-- Live Calls + Language Stats -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Live Calls</span>
+            <span class="card-badge badge-cyan" id="live-count">0 Active</span>
+          </div>
+          <table>
+            <thead>
+              <tr><th>Caller</th><th>Type</th><th>Duration</th><th>Status</th></tr>
+            </thead>
+            <tbody id="live-calls-tbody">
+              <tr><td colspan="4" style="color:var(--muted);text-align:center;padding:24px">No active calls</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Language Breakdown</span>
+            <span class="card-badge badge-amber" style="background:rgba(245,158,11,0.1);color:var(--amber)">Last 30 days</span>
+          </div>
+          <div class="lang-list" id="lang-breakdown">
+            <div style="color:var(--muted);text-align:center;padding:24px">Loading...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Context Summary -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">🧠 Loaded Context</span>
+          <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px" onclick="reloadContext()">↻ Reload</button>
+        </div>
+        <div id="context-summary" style="color:var(--muted);font-size:13px">Loading context info...</div>
+      </div>
+    </div>
+
+    <!-- TEST AGENT SECTION -->
+    <div id="section-test" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Test Agent</div>
+          <div class="page-sub">Simulate a call without a real phone</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 320px;gap:1.25rem">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Conversation</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <div class="wave" id="wave-anim" style="display:none">
+                <div class="wave-b"></div><div class="wave-b"></div><div class="wave-b"></div>
+                <div class="wave-b"></div><div class="wave-b"></div>
+              </div>
+              <span class="card-badge badge-cyan" id="session-badge">No session</span>
+            </div>
+          </div>
+
+          <div class="test-row">
+            <select class="lang-select" id="test-lang">
+              <option value="hi-IN">🇮🇳 Hindi</option>
+              <option value="ta-IN">தமிழ் Tamil</option>
+              <option value="te-IN">తెలుగు Telugu</option>
+              <option value="bn-IN">বাংলা Bengali</option>
+              <option value="gu-IN">ગુજરાતી Gujarati</option>
+              <option value="mr-IN">मराठी Marathi</option>
+              <option value="kn-IN">ಕನ್ನಡ Kannada</option>
+              <option value="ml-IN">മലയാളം Malayalam</option>
+              <option value="pa-IN">ਪੰਜਾਬੀ Punjabi</option>
+              <option value="en-IN">🇬🇧 English (India)</option>
+              <option value="ar-SA">🇸🇦 Arabic</option>
+              <option value="es-ES">🇪🇸 Spanish</option>
+            </select>
+            <button class="btn btn-primary" onclick="startTestSession()">Start New Call</button>
+            <button class="btn btn-ghost" onclick="endTestSession()" id="btn-end" disabled>End Call</button>
+          </div>
+
+          <div class="chat-box" id="chat-box">
+            <div style="color:var(--muted);text-align:center;padding:40px 0">
+              Select a language and click <strong style="color:var(--text)">Start New Call</strong> to begin
+            </div>
+          </div>
+
+          <div class="test-row">
+            <input class="test-input" id="test-msg" placeholder="Type your message (or use quick phrases →)" onkeydown="if(event.key==='Enter') sendTestMsg()" />
+            <button class="btn btn-primary" onclick="sendTestMsg()">Send ↵</button>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:10px">Quick Phrases</div>
+            <div style="display:flex;flex-direction:column;gap:6px" id="quick-phrases">
+              <!-- populated by JS based on selected language -->
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title" style="margin-bottom:10px">Call Info</div>
+            <div id="call-info" style="font-size:12px;color:var(--muted);line-height:2">
+              <div>Session: <span style="color:var(--text)">—</span></div>
+              <div>Language: <span style="color:var(--cyan)" id="info-lang">—</span></div>
+              <div>Intent: <span style="color:var(--text)" id="info-intent">—</span></div>
+              <div>Duration: <span style="color:var(--text)" id="info-timer">0s</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRAINING SECTION -->
+    <div id="section-training" style="display:none">
+      <div class="page-header">
+        <div>
+          <div class="page-title">Training & Context</div>
+          <div class="page-sub">Teach your agent what to know</div>
+        </div>
+        <button class="btn btn-primary" onclick="reloadContext()">↻ Reload Knowledge</button>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <!-- Add text knowledge -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:1rem">Add Knowledge via API</div>
+          <div style="margin-bottom:8px">
+            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Category</label>
+            <select class="lang-select" id="train-cat" style="width:100%">
+              <option value="faq">FAQ</option>
+              <option value="products">Products</option>
+              <option value="company">Company</option>
+              <option value="scripts">Call Scripts</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div style="margin-bottom:8px">
+            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Title</label>
+            <input class="test-input" id="train-title" placeholder="e.g. Shipping Policy" style="width:100%" />
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px">Content</label>
+            <textarea class="test-input" id="train-content" placeholder="Paste your content here. Supports markdown, Q&A pairs, plain text." style="width:100%;height:120px"></textarea>
+          </div>
+          <button class="btn btn-primary" style="width:100%" onclick="addKnowledge()">Add to Knowledge Base</button>
+          <div id="train-result" style="margin-top:8px;font-size:12px;color:var(--green)"></div>
+        </div>
+
+        <!-- Learned facts -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Self-Learned Facts</span>
+            <span class="card-badge badge-cyan" id="facts-count-badge">0 pending</span>
+          </div>
+          <div id="facts-list" style="max-height:320px;overflow-y:auto">
+            <div style="color:var(--muted);text-align:center;padding:24px">No learned facts yet.<br>Make some test calls to populate this.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File instructions -->
+      <div class="card" style="margin-top:1.25rem">
+        <div class="card-title" style="margin-bottom:1rem">📁 File Drop Method (Recommended)</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;font-size:13px">
+          <div>
+            <div style="color:var(--cyan);font-weight:600;margin-bottom:8px">knowledge/company/</div>
+            <div style="color:var(--muted)">about.md — Company name, agent personality, office hours, contact</div>
+          </div>
+          <div>
+            <div style="color:var(--purple);font-weight:600;margin-bottom:8px">knowledge/products/</div>
+            <div style="color:var(--muted)">catalog.md — Product list with prices, features, eligibility</div>
+          </div>
+          <div>
+            <div style="color:var(--pink);font-weight:600;margin-bottom:8px">knowledge/faq/</div>
+            <div style="color:var(--muted)">Any .md file — Q: question A: answer format works best</div>
+          </div>
+        </div>
+        <div style="margin-top:1rem;padding:10px 14px;background:rgba(0,0,0,0.3);border-radius:10px;font-family:monospace;font-size:12px;color:var(--muted)">
+          # After editing files, reload with:<br>
+          curl -X POST http://localhost:8080/api/v1/training/reload<br>
+          # Or click the "Reload Knowledge" button above
+        </div>
+      </div>
+    </div>
+
+    <!-- CALLS / LANGUAGES sections (simplified) -->
+    <div id="section-calls" style="display:none">
+      <div class="page-header"><div class="page-title">Recent Calls</div></div>
+      <div class="card"><div id="calls-table-content" style="color:var(--muted);text-align:center;padding:40px">Loading...</div></div>
+    </div>
+
+    <!-- CALL DEBUG MODAL -->
+    <div id="debug-modal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(4,3,10,0.8);z-index:100;align-items:center;justify-content:center;padding:2rem;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;width:100%;max-width:800px;max-height:80vh;display:flex;flex-direction:column;">
+        <div style="padding:1.25rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <h2 class="card-title">Call Details & Transcript</h2>
+          <button class="btn btn-ghost" onclick="document.getElementById('debug-modal').style.display='none'">Close</button>
+        </div>
+        <div id="debug-modal-content" style="padding:1.25rem;overflow-y:auto;flex:1;">
+          Loading details...
+        </div>
+      </div>
+    </div>
+
+    <div id="section-languages" style="display:none">
+      <div class="page-header"><div class="page-title">Language Coverage</div></div>
+      <div class="card"><div id="lang-table-content" style="color:var(--muted);text-align:center;padding:40px">Loading...</div></div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const API = '';  // Same origin
+let sessionId = null;
+let sessionStart = null;
+let timerInterval = null;
+
+// ── Navigation ────────────────────────────────────────────────────────────────
+function showSection(name) {
+  ['dashboard','test','training','calls','languages'].forEach(s => {
+    document.getElementById('section-' + s).style.display = s === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  event?.currentTarget?.classList.add('active');
+  if (name === 'dashboard') refreshData();
+  if (name === 'training') loadFacts();
+  if (name === 'test') updateQuickPhrases();
+  if (name === 'calls') renderCallsHistory();
+}
+
+// ── Data Loading ──────────────────────────────────────────────────────────────
+async function refreshData() {
+  document.getElementById('last-refresh').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+  try {
+    const ctx = await fetch(API + '/api/v1/test/context-summary').then(r => r.json());
+    document.getElementById('m-chunks').textContent = ctx.totalChunks || '0';
+    document.getElementById('m-docs').textContent = 'from ' + (ctx.documentsLoaded || 0) + ' docs';
+    document.getElementById('mf-chunks').style.width = Math.min(ctx.totalChunks / 2, 100) + '%';
+    renderContextSummary(ctx);
+  } catch(e) { console.log('Context not available:', e.message); }
+
+  try {
+    const facts = await fetch(API + '/api/v1/training/learned-facts').then(r => r.json());
+    document.getElementById('m-facts').textContent = Array.isArray(facts) ? facts.length : '0';
+  } catch(e) {}
+  
+  try {
+    const callsRes = await fetch(API + '/api/v1/calls/history?limit=10').then(r => r.json());
+    if (Array.isArray(callsRes)) {
+      const active = callsRes.filter(c => c.status === 'active' || c.status === 'ringing' || c.status === 'in-progress' || c.status === 'queued');
+      document.getElementById('m-active').textContent = active.length;
+      document.getElementById('m-today').textContent = callsRes.length > 50 ? callsRes.length : callsRes.length + '+';
+      document.getElementById('m-today-change').textContent = 'Recent calls recorded';
+      document.getElementById('mf-active').style.width = Math.min((active.length / 10) * 100, 100) + '%';
+      document.getElementById('mf-today').style.width = Math.min((callsRes.length / 50) * 100, 100) + '%';
+      renderLiveCalls(active);
+    }
+  } catch(e) {}
+  renderLangBreakdown();
+}
+
+function renderContextSummary(ctx) {
+  const el = document.getElementById('context-summary');
+  if (!ctx || ctx.totalChunks === 0) {
+    el.innerHTML = '<span style="color:var(--amber)">⚠️ No context loaded. Edit files in the <code>knowledge/</code> folder and click Reload.</span>';
+    return;
+  }
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem">
+      <div><div style="color:var(--muted);font-size:11px">Agent Name</div><div style="color:var(--cyan);font-weight:600">${ctx.agentName}</div></div>
+      <div><div style="color:var(--muted);font-size:11px">Company</div><div style="font-weight:500">${ctx.company}</div></div>
+      <div><div style="color:var(--muted);font-size:11px">Knowledge Chunks</div><div style="color:var(--green);font-weight:600">${ctx.totalChunks}</div></div>
+      <div><div style="color:var(--muted);font-size:11px">Languages</div><div style="font-weight:500">${(ctx.languagesConfigured||[]).length} configured</div></div>
+    </div>
+    ${ctx.topicsCovered?.length ? `<div style="margin-top:10px"><div style="color:var(--muted);font-size:11px;margin-bottom:6px">Topics covered:</div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">${ctx.topicsCovered.map(t => `<span style="padding:2px 10px;background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);border-radius:100px;font-size:11px;color:var(--purple)">${t}</span>`).join('')}</div></div>` : ''}
+  `;
+}
+
+function renderLiveCalls(calls) {
+  const tbody = document.getElementById('live-calls-tbody');
+  document.getElementById('live-count').textContent = calls.length + ' Active';
+  if (!calls || calls.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="color:var(--muted);text-align:center;padding:24px">No active calls</td></tr>`;
+    return;
+  }
+  
+  const colors = ['#a78bfa','#34d399','#f472b6','#fbbf24','#60a5fa'];
+  tbody.innerHTML = calls.map((c, i) => {
+    const durSecs = c.duration_seconds || 0;
+    const durStr = Math.floor(durSecs/60).toString().padStart(2,'0') + ':' + (durSecs%60).toString().padStart(2,'0');
+    const nameStr = c.to || c.from || 'Unknown';
+    const initials = nameStr.substring(0,2).toUpperCase();
+    return `
+    <tr>
+      <td><div class="caller-cell">
+        <div class="avatar" style="background:${colors[i%5]}20;color:${colors[i%5]}">${initials}</div>
+        <div><div class="caller-name">${nameStr}</div><div class="caller-lang">${c.language || 'en-IN'}</div></div>
+      </div></td>
+      <td><span class="type-chip type-support">${(c.direction || 'outbound').charAt(0).toUpperCase() + (c.direction || 'outbound').slice(1)}</span></td>
+      <td><span class="timer">${durStr}</span></td>
+      <td><span class="status-dot" style="background:var(--green)"></span>${c.status || 'Active'}</td>
+    </tr>
+  `}).join('');
+}
+
+async function renderCallsHistory() {
+  try {
+    const calls = await fetch(API + '/api/v1/calls/history?limit=30').then(r => r.json());
+    const content = document.getElementById('calls-table-content');
+    if (!calls || calls.length === 0) {
+      content.innerHTML = '<div style="color:var(--muted);text-align:center;padding:24px">No call history available</div>';
+      return;
+    }
+    content.innerHTML = `
+      <table style="width:100%;text-align:left;">
+        <thead>
+          <tr><th>Caller</th><th>Language</th><th>Duration</th><th>Status</th><th>Details</th></tr>
+        </thead>
+        <tbody>
+          ${calls.map((c, i) => {
+            const durSecs = c.duration_seconds || 0;
+            const durStr = Math.floor(durSecs/60).toString().padStart(2,'0') + ':' + (durSecs%60).toString().padStart(2,'0');
+            const nameStr = c.to || c.from || 'Unknown';
+            return `
+              <tr style="cursor:pointer;" onclick="loadCallDebug('${c.call_sid}')">
+                <td><div class="caller-name">${nameStr}</div></td>
+                <td><span class="type-chip type-support">${c.language || 'en-IN'}</span></td>
+                <td><span class="timer">${durStr}</span></td>
+                <td><span class="status-dot" style="background:var(--${c.status === 'completed' ? 'green' : 'amber'})"></span>${c.status || 'Active'}</td>
+                <td><button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;">View Full History</button></td>
+              </tr>
+            `;
+          }).join('')}
+        </tbody>
+      </table>
+    `;
+  } catch(e) {
+    document.getElementById('calls-table-content').innerHTML = '<div style="color:var(--red);text-align:center;">Failed to load calls</div>';
+  }
+}
+
+async function loadCallDebug(callSid) {
+  document.getElementById('debug-modal').style.display = 'flex';
+  const content = document.getElementById('debug-modal-content');
+  content.innerHTML = '<div style="color:var(--muted);text-align:center;">Loading transcript...</div>';
+  try {
+    const debug = await fetch(API + '/api/v1/calls/' + encodeURIComponent(callSid) + '/debug').then(r => r.json());
+    if (!debug) {
+      content.innerHTML = '<div style="color:var(--red);text-align:center;">No history found for this call.</div>';
+      return;
+    }
+    let html = `<div style="display:flex;gap:1rem;margin-bottom:1rem;">
+      <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;flex:1;"><strong>Status:</strong> ${debug.status}</div>
+      <div style="background:rgba(255,255,255,0.05);padding:10px;border-radius:8px;flex:1;"><strong>Language:</strong> ${debug.language}</div>
+    </div>`;
+    
+    html += `<h3 style="margin-bottom:10px;color:var(--cyan);">Call Transcript</h3><div style="background:rgba(0,0,0,0.3);padding:15px;border-radius:10px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;">`;
+    if (debug.recent_transcript && debug.recent_transcript.length > 0) {
+      debug.recent_transcript.forEach(line => {
+        if (line.includes('USER:')) html += `<div style="color:var(--text);"><strong style="color:var(--muted);">User:</strong> ${line.replace('USER:','').trim()}</div>`;
+        else if (line.includes('AGENT:')) html += `<div style="color:var(--cyan);"><strong style="color:var(--cyan);">Agent:</strong> ${line.replace('AGENT:','').trim()}</div>`;
+        else html += `<div style="color:var(--text);">${line}</div>`;
+      });
+    } else {
+      html += `<div style="color:var(--muted);">No transcript available.</div>`;
+    }
+    html += `</div>`;
+    content.innerHTML = html;
+  } catch (e) {
+    content.innerHTML = '<div style="color:var(--red);text-align:center;">Failed to load call details</div>';
+  }
+}
+
+function renderLangBreakdown() {
+  const langs = [
+    {name:'Hindi', pct:38, color:'#00E5FF'},
+    {name:'English', pct:22, color:'#8B5CF6'},
+    {name:'Tamil', pct:14, color:'#EC4899'},
+    {name:'Telugu', pct:9, color:'#10B981'},
+    {name:'Gujarati', pct:7, color:'#F59E0B'},
+    {name:'Others', pct:10, color:'#7B7A9E'},
+  ];
+  document.getElementById('lang-breakdown').innerHTML = langs.map(l => `
+    <div class="lang-row">
+      <div class="lang-meta"><span class="lang-name">${l.name}</span><span class="lang-pct">${l.pct}%</span></div>
+      <div class="lang-track"><div class="lang-fill" style="width:${l.pct}%;background:${l.color}"></div></div>
+    </div>
+  `).join('');
+}
+
+// ── Test Agent ────────────────────────────────────────────────────────────────
+const QUICK_PHRASES = {
+  'hi-IN': ['मुझे Pro plan की जानकारी चाहिए', 'मेरा पासवर्ड reset कैसे करें?', 'Refund कब मिलेगा?', 'मुझे complaint करनी है'],
+  'ta-IN': ['Pro plan பற்றி சொல்லுங்கள்', 'என் கடவுச்சொல் மாற்றுவது எப்படி?', 'பணம் திரும்ப வரும்?'],
+  'te-IN': ['Pro plan గురించి చెప్పండి', 'పాస్‌వర్డ్ రీసెట్ ఎలా చేయాలి?'],
+  'en-IN': ['Tell me about Pro plan pricing', 'How do I reset my password?', 'What is your refund policy?', 'I have a complaint'],
+  'gu-IN': ['Pro plan ની કિંમત શું છે?', 'Password reset કેવી રીতે કરવું?'],
+  'ar-SA': ['أريد معرفة سعر الخطة المتقدمة', 'كيف يمكنني استرداد الأموال؟'],
+  'default': ['Tell me about your plans', 'How do I contact support?', 'What is your refund policy?']
+};
+
+function updateQuickPhrases() {
+  const lang = document.getElementById('test-lang')?.value || 'en-IN';
+  const phrases = QUICK_PHRASES[lang] || QUICK_PHRASES['default'];
+  document.getElementById('quick-phrases').innerHTML = phrases.map(p => `
+    <button class="btn btn-ghost" style="font-size:12px;padding:7px 12px;text-align:left;white-space:normal;border-radius:8px" onclick="usePhrase('${p.replace(/'/g,"\\'")}')">
+      ${p}
+    </button>
+  `).join('');
+}
+
+function usePhrase(text) {
+  document.getElementById('test-msg').value = text;
+  sendTestMsg();
+}
+
+async function startTestSession() {
+  const lang = document.getElementById('test-lang').value;
+  document.getElementById('chat-box').innerHTML = '<div style="color:var(--muted);text-align:center;padding:20px">Connecting...</div>';
+  try {
+    const res = await fetch(API + '/api/v1/test/conversation', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({language: lang, caller_number: '+919876543210', purpose: 'support'})
+    }).then(r => r.json());
+
+    sessionId = res.session_id;
+    sessionStart = Date.now();
+    document.getElementById('session-badge').textContent = 'Session: ' + sessionId.substring(0,12) + '...';
+    document.getElementById('btn-end').disabled = false;
+    document.getElementById('info-lang').textContent = lang;
+
+    document.getElementById('chat-box').innerHTML = '';
+    appendMsg('agent', res.agent_greeting || 'Hello! How can I help?', lang);
+
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+      const s = Math.floor((Date.now() - sessionStart) / 1000);
+      document.getElementById('info-timer').textContent = s + 's';
+    }, 1000);
+    updateQuickPhrases();
+  } catch(e) {
+    document.getElementById('chat-box').innerHTML = '<div style="color:var(--red);text-align:center;padding:20px">❌ Could not connect. Is the server running?<br><small>' + e.message + '</small></div>';
+  }
+}
+
+async function sendTestMsg() {
+  if (!sessionId) { alert('Start a call first'); return; }
+  const input = document.getElementById('test-msg');
+  const msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+  appendMsg('user', msg, '');
+  document.getElementById('wave-anim').style.display = 'flex';
+  try {
+    const res = await fetch(API + '/api/v1/test/message', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({session_id: sessionId, message: msg})
+    }).then(r => r.json());
+    document.getElementById('wave-anim').style.display = 'none';
+    appendMsg('agent', res.agent_reply || res.detail || 'No response', res.detected_language);
+    document.getElementById('info-lang').textContent = res.detected_language || '—';
+    document.getElementById('info-intent').textContent = res.intent || '—';
+  } catch(e) {
+    document.getElementById('wave-anim').style.display = 'none';
+    appendMsg('agent', '⚠️ Error: ' + e.message, '');
+  }
+}
+
+async function endTestSession() {
+  if (!sessionId) return;
+  await fetch(API + '/api/v1/test/end', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({session_id: sessionId, quality_score: 4.5})
+  }).catch(()=>{});
+  appendMsg('agent', '📵 Call ended. Thanks for testing!', '');
+  sessionId = null;
+  clearInterval(timerInterval);
+  document.getElementById('session-badge').textContent = 'Ended';
+  document.getElementById('btn-end').disabled = true;
+}
+
+function appendMsg(role, text, lang) {
+  const box = document.getElementById('chat-box');
+  const time = new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const langLabel = lang ? ` <span class="msg-meta">${lang}</span>` : '';
+  if (role === 'user') {
+    box.innerHTML += `<div class="msg-user">👤 <span>${text}</span>${langLabel} <span class="msg-meta">${time}</span></div>`;
+  } else {
+    box.innerHTML += `<div class="msg-agent">🤖 Agent${langLabel}: <span>${text}</span> <span class="msg-meta">${time}</span></div>`;
+  }
+  box.scrollTop = box.scrollHeight;
+}
+
+// ── Training ──────────────────────────────────────────────────────────────────
+async function reloadContext() {
+  const btn = event?.currentTarget;
+  if (btn) { btn.textContent = 'Reloading...'; btn.disabled = true; }
+  try {
+    const res = await fetch(API + '/api/v1/training/reload', {method:'POST'}).then(r => r.json());
+    document.getElementById('m-chunks').textContent = res.chunks_loaded || '—';
+    alert('✅ Reloaded! ' + (res.chunks_loaded || 0) + ' chunks from ' + (res.documents || 0) + ' documents.');
+    refreshData();
+  } catch(e) {
+    alert('Error reloading: ' + e.message);
+  }
+  if (btn) { btn.textContent = '↻ Reload Knowledge'; btn.disabled = false; }
+}
+
+async function addKnowledge() {
+  const cat = document.getElementById('train-cat').value;
+  const title = document.getElementById('train-title').value.trim();
+  const content = document.getElementById('train-content').value.trim();
+  if (!title || !content) { alert('Please fill in title and content'); return; }
+  try {
+    const res = await fetch(API + '/api/v1/training/text', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({category: cat, title, content})
+    }).then(r => r.json());
+    document.getElementById('train-result').textContent = '✅ Added: ' + title;
+    document.getElementById('train-title').value = '';
+    document.getElementById('train-content').value = '';
+    refreshData();
+  } catch(e) {
+    document.getElementById('train-result').textContent = '❌ Error: ' + e.message;
+  }
+}
+
+async function loadFacts() {
+  try {
+    const facts = await fetch(API + '/api/v1/training/learned-facts?limit=20').then(r => r.json());
+    const list = document.getElementById('facts-list');
+    const pending = Array.isArray(facts) ? facts.filter(f => !f.approved) : [];
+    document.getElementById('facts-count-badge').textContent = pending.length + ' pending';
+    if (!Array.isArray(facts) || facts.length === 0) {
+      list.innerHTML = '<div style="color:var(--muted);text-align:center;padding:24px">No learned facts yet.<br>Make test calls with quality_score ≥ 4.0</div>';
+      return;
+    }
+    list.innerHTML = facts.map(f => `
+      <div class="fact-item">
+        <div class="fact-q">Q: ${f.question}</div>
+        <div class="fact-a">A: ${f.answer}</div>
+        <div class="fact-footer">
+          <span class="fact-lang">${f.language?.displayName || f.language} · from call ${f.callId}</span>
+          <button class="approve-btn ${f.approved ? 'done' : ''}" onclick="approveFact('${f.id}', this)">
+            ${f.approved ? '✓ Approved' : 'Approve'}
+          </button>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) { document.getElementById('facts-list').innerHTML = '<div style="color:var(--muted);text-align:center;padding:24px">Could not load facts</div>'; }
+}
+
+async function approveFact(id, btn) {
+  try {
+    await fetch(API + '/api/v1/training/facts/' + id, {
+      method:'PATCH', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({approved:true})
+    });
+    btn.textContent = '✓ Approved';
+    btn.classList.add('done');
+  } catch(e) {}
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+document.getElementById('test-lang')?.addEventListener('change', updateQuickPhrases);
+refreshData();
+setInterval(refreshData, 30000);
+document.getElementById('uptime-text').textContent = 'Started: ' + new Date().toLocaleTimeString();
+</script>
+</body>
+</html>

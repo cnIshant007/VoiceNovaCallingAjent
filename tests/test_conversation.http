@@ -1,0 +1,162 @@
+### VoiceNova AI — REST Client Tests
+### Open in VS Code with "REST Client" extension and click "Send Request"
+### Install extension: humao.rest-client
+
+@baseUrl = http://localhost:8080
+@sessionId = {{startConversation.response.body.session_id}}
+
+### ─────────────────────────────────────────────
+### 0. Health Check
+### ─────────────────────────────────────────────
+# @name health
+GET {{baseUrl}}/health
+
+###
+
+### ─────────────────────────────────────────────
+### 1. Check what context / knowledge was loaded
+### ─────────────────────────────────────────────
+# @name contextCheck
+GET {{baseUrl}}/api/v1/test/context-summary
+
+###
+
+### ─────────────────────────────────────────────
+### 2. Start a Hindi conversation
+### ─────────────────────────────────────────────
+# @name startConversation
+POST {{baseUrl}}/api/v1/test/conversation
+Content-Type: application/json
+
+{
+  "language": "hi-IN",
+  "caller_number": "+919876543210",
+  "purpose": "support"
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 3. Send Hindi message (auto-detects language)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/test/message
+Content-Type: application/json
+
+{
+  "session_id": "PASTE_SESSION_ID_HERE",
+  "message": "Mujhe Pro plan ke baare mein jaankari chahiye"
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 4. Send Tamil message (language switches automatically)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/test/message
+Content-Type: application/json
+
+{
+  "session_id": "PASTE_SESSION_ID_HERE",
+  "message": "என் கடவுச்சொல்லை மாற்ற வேண்டும்"
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 5. Send English message
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/test/message
+Content-Type: application/json
+
+{
+  "session_id": "PASTE_SESSION_ID_HERE",
+  "message": "What is your refund policy?"
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 6. Test language detection standalone
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/test/detect-language
+Content-Type: application/json
+
+{
+  "text": "ನನಗೆ ಸಹಾಯ ಬೇಕು"
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 7. End conversation (triggers self-learning)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/test/end
+Content-Type: application/json
+
+{
+  "session_id": "PASTE_SESSION_ID_HERE",
+  "quality_score": 4.5
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 8. Add new knowledge via API (no file needed)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/training/text
+Content-Type: application/json
+
+{
+  "category": "faq",
+  "title": "Shipping Info",
+  "content": "We ship within 2 business days. Free shipping above Rs 500. COD available. Track your order at track.mycompany.com",
+  "language": "en"
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 9. Hot-reload knowledge base (after editing files)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/api/v1/training/reload
+
+###
+
+### ─────────────────────────────────────────────
+### 10. View facts the agent learned from calls
+### ─────────────────────────────────────────────
+GET {{baseUrl}}/api/v1/training/learned-facts?limit=10
+
+###
+
+### ─────────────────────────────────────────────
+### 11. Approve a learned fact
+### ─────────────────────────────────────────────
+PATCH {{baseUrl}}/api/v1/training/facts/fact_abc12345
+Content-Type: application/json
+
+{
+  "approved": true
+}
+
+###
+
+### ─────────────────────────────────────────────
+### 12. Simulate Twilio inbound call (raw TwiML)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/webhooks/twilio/inbound
+Content-Type: application/x-www-form-urlencoded
+
+CallSid=TEST_SID_001&From=%2B919876543210&To=%2B911800000000&CallStatus=ringing
+
+###
+
+### ─────────────────────────────────────────────
+### 13. Simulate Twilio transcription (caller spoke)
+### ─────────────────────────────────────────────
+POST {{baseUrl}}/webhooks/twilio/transcription
+Content-Type: application/x-www-form-urlencoded
+
+CallSid=TEST_SID_001&SpeechResult=Mujhe+refund+chahiye&Confidence=0.94&LanguageCode=hi-IN
+
+###

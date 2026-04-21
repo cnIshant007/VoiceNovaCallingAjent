@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# ========= CONFIG =========
+USERNAME="cnIshant007"
+FROM_DATE=$1
+TO_DATE=$2
+OUTPUT_FILE="final_monthly_report.txt"
+
+if [ -z "$FROM_DATE" ] || [ -z "$TO_DATE" ]; then
+  echo "Usage: ./git_pro_report_fixed.sh 2025-10-01 2025-10-31"
+  exit 1
+fi
+
+echo "Generating professional report..."
+
+# ========= GENERATE BODY =========
+gh search commits \
+  --author "$USERNAME" \
+  --committer-date "$FROM_DATE..$TO_DATE" \
+  --limit 1000 \
+  --json repository,commit \
+| jq -r '
+
+def clean_msg:
+  .commit.message
+  | split("\n")
+  | map(select(length > 0))
+  | .[0];
+
+def time_estimate(msg):
+  if msg | test("fix|bug"; "i") then 0.5
+  elif msg | test("ui"; "i") then 2
+  elif msg | test("feature|add"; "i") then 3
+  elif msg | test("refactor"; "i") then 1
+  elif msg | test("merge"; "i") then 0.5
+  else 1
+  end;
+
+sort_by(.commit.author.date)
+| group_by(.commit.author.date[0:10])[]
+| . as $day
+| (
+    "📅 " + $day[0].commit.author.date[0:10] + "\n" +
+    (
+      $day
+      | map(
+

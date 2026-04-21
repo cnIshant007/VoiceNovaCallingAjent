@@ -1,0 +1,1 @@
+{"provider":"google","model":"gemini-2.5-flash","apiUrl":"https://generativelanguage.googleapis.com/v1beta/openai/chat/completions","apiKey":"","apiFormat":"openai"}

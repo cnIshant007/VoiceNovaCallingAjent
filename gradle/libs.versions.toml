@@ -1,0 +1,56 @@
+[versions]
+exposed = "1.1.1"
+flywaydb = "12.2.0"
+hikaricp = "7.0.2"
+hoplite = "2.9.0"
+insertKoin = "4.2.0"
+kotlinLoggingJvm = "3.0.5"
+kotlinTest = "2.3.20"
+kotlinx = "1.10.2"
+kotlinxSerializationJson = "1.10.0"
+ktor = "3.4.2"
+lettuceCore = "7.5.0.RELEASE"
+logbackClassic = "1.5.32"
+mockk = "1.14.9"
+pdfbox = "3.0.7"
+postgresql = "42.7.10"
+
+[libraries]
+exposed-core = { group = "org.jetbrains.exposed", name = "exposed-core", version.ref = "exposed" }
+exposed-dao = { group = "org.jetbrains.exposed", name = "exposed-dao", version.ref = "exposed" }
+exposed-jdbc = { group = "org.jetbrains.exposed", name = "exposed-jdbc", version.ref = "exposed" }
+exposed-kotlin-datetime = { group = "org.jetbrains.exposed", name = "exposed-kotlin-datetime", version.ref = "exposed" }
+flyway-core = { group = "org.flywaydb", name = "flyway-core", version.ref = "flywaydb" }
+flyway-database-postgresql = { group = "org.flywaydb", name = "flyway-database-postgresql", version.ref = "flywaydb" }
+hikaricp = { group = "com.zaxxer", name = "HikariCP", version.ref = "hikaricp" }
+hoplite-core = { group = "com.sksamuel.hoplite", name = "hoplite-core", version.ref = "hoplite" }
+hoplite-yaml = { group = "com.sksamuel.hoplite", name = "hoplite-yaml", version.ref = "hoplite" }
+koin-ktor = { group = "io.insert-koin", name = "koin-ktor", version.ref = "insertKoin" }
+koin-logger-slf4j = { group = "io.insert-koin", name = "koin-logger-slf4j", version.ref = "insertKoin" }
+koin-test = { group = "io.insert-koin", name = "koin-test", version.ref = "insertKoin" }
+kotlin-logging-jvm = { group = "io.github.microutils", name = "kotlin-logging-jvm", version.ref = "kotlinLoggingJvm" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinx" }
+kotlinx-coroutines-reactive = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-reactive", version.ref = "kotlinx" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+ktor-client-cio = { group = "io.ktor", name = "ktor-client-cio", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
+ktor-server-auth = { group = "io.ktor", name = "ktor-server-auth", version.ref = "ktor" }
+ktor-server-auth-jwt = { group = "io.ktor", name = "ktor-server-auth-jwt", version.ref = "ktor" }
+ktor-server-call-logging = { group = "io.ktor", name = "ktor-server-call-logging", version.ref = "ktor" }
+ktor-server-content-negotiation = { group = "io.ktor", name = "ktor-server-content-negotiation", version.ref = "ktor" }
+ktor-server-core = { group = "io.ktor", name = "ktor-server-core", version.ref = "ktor" }
+ktor-server-cors = { group = "io.ktor", name = "ktor-server-cors", version.ref = "ktor" }
+ktor-server-html-builder = { group = "io.ktor", name = "ktor-server-html-builder", version.ref = "ktor" }
+ktor-server-netty = { group = "io.ktor", name = "ktor-server-netty", version.ref = "ktor" }
+ktor-server-status-pages = { group = "io.ktor", name = "ktor-server-status-pages", version.ref = "ktor" }
+ktor-server-test-host = { group = "io.ktor", name = "ktor-server-test-host", version.ref = "ktor" }
+ktor-server-websockets = { group = "io.ktor", name = "ktor-server-websockets", version.ref = "ktor" }
+lettuce-core = { group = "io.lettuce", name = "lettuce-core", version.ref = "lettuceCore" }
+logback-classic = { group = "ch.qos.logback", name = "logback-classic", version.ref = "logbackClassic" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+pdfbox = { group = "org.apache.pdfbox", name = "pdfbox", version.ref = "pdfbox" }
+postgresql = { group = "org.postgresql", name = "postgresql", version.ref = "postgresql" }

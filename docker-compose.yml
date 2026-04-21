@@ -1,0 +1,101 @@
+version: '3.9'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: voicenova_api
+    restart: unless-stopped
+    ports:
+      - "${SERVER_PORT:-8080}:8080"
+    environment:
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - LLM_PROVIDER=${LLM_PROVIDER:-anthropic}
+      - LLM_MODEL=${LLM_MODEL:-claude-3-5-sonnet-20241022}
+      - LLM_API_URL=${LLM_API_URL:-http://host.docker.internal:11434/api/chat}
+      - LLM_API_FORMAT=${LLM_API_FORMAT:-ollama}
+      - RUNNING_IN_DOCKER=true
+      - STT_PROVIDER=${STT_PROVIDER:-google}
+      - GOOGLE_SPEECH_KEY=${GOOGLE_SPEECH_KEY}
+      - TTS_PROVIDER=${TTS_PROVIDER:-elevenlabs}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - DATABASE_URL=jdbc:postgresql://db:5432/travelsphere
+      - DB_USER=${DB_USER:-postgres}
+      - DB_PASS=${DB_PASS:-password}
+      - REDIS_URL=redis://cache:6379
+      - DEFAULT_LANGUAGE=${DEFAULT_LANGUAGE:-hi-IN}
+      - AUTO_DETECT_LANGUAGE=${AUTO_DETECT_LANGUAGE:-true}
+      - ENABLE_SELF_LEARNING=${ENABLE_SELF_LEARNING:-true}
+      - MOCK_TELEPHONY=${MOCK_TELEPHONY:-true}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - API_SECRET_KEY=${API_SECRET_KEY:-dev_secret_key_change_me}
+    volumes:
+      - ./.env:/app/.env:ro             # Keep runtime config in sync with local env
+      - ./knowledge:/app/knowledge        # Your context files (hot-reload)
+      - ./models:/app/models              # Offline Vosk + Piper models
+      - ./storage:/app/storage            # Call recordings + learned facts
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: postgres:16-alpine
+    container_name: voicenova_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: travelsphere
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASS:-password}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-postgres} -d travelsphere"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    container_name: voicenova_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redisdata:/data
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: voicenova_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@example.com}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+      SCRIPT_NAME: /pgadmin
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    volumes:
+      - pgadmindata:/var/lib/pgadmin
+
+volumes:
+  pgdata:
+  redisdata:
+  pgadmindata:

@@ -1,0 +1,1 @@
+{"provider":"local","model":"gemma:2b","apiUrl":"http://host.docker.internal:11434/api/chat","apiKey":"","apiFormat":"ollama"}

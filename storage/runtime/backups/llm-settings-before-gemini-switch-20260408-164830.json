@@ -1,0 +1,1 @@
+{"provider":"local","model":"qwen2.5:1.5b","apiUrl":"http://host.docker.internal:11434/api/chat","apiKey":"","apiFormat":"ollama"}

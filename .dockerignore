@@ -1,0 +1,15 @@
+.git
+.gitignore
+.gradle
+.idea
+.kotlin
+build
+backend/build
+composeApp/build
+storage
+models
+docker-compose.override.yml
+*.log
+*.tmp
+tmp
+.DS_Store

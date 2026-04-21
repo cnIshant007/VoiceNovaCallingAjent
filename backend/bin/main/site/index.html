@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoiceNova AI Calling Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5efe3;
+    --ink: #1d2b2a;
+    --muted: #5e6b67;
+    --panel: rgba(255, 251, 243, 0.88);
+    --panel-strong: #fffaf1;
+    --line: rgba(29, 43, 42, 0.12);
+    --brand: #0f766e;
+    --brand-deep: #134e4a;
+    --accent: #d97706;
+    --accent-soft: #ffedd5;
+    --mint: #d9f99d;
+    --shadow: 0 20px 60px rgba(38, 44, 39, 0.12);
+    --radius-xl: 30px;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: "Plus Jakarta Sans", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(circle at top left, rgba(217, 119, 6, 0.13), transparent 30%),
+      radial-gradient(circle at top right, rgba(15, 118, 110, 0.14), transparent 34%),
+      linear-gradient(180deg, #f8f1e5 0%, #f3ead9 100%);
+  }
+
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  button, input, select, textarea { font: inherit; }
+
+  .shell {
+    width: min(1200px, calc(100% - 32px));
+    margin: 0 auto;
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    backdrop-filter: blur(16px);
+    background: rgba(248, 241, 229, 0.76);
+    border-bottom: 1px solid rgba(29, 43, 42, 0.08);
+  }
+
+  .topbar-inner {
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand-mark {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    color: white;
+    font-weight: 800;
+    box-shadow: 0 14px 30px rgba(15, 118, 110, 0.28);
+  }
+
+  .brand-copy strong {
+    display: block;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.05rem;
+  }
+
+  .brand-copy span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.84rem;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .nav a {
+    text-decoration: none;
+  }
+
+  .nav a:hover {
+    color: var(--ink);
+  }
+
+  .cta-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 999px;
+    padding: 13px 18px;
+    text-decoration: none;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--brand), #14b8a6);
+    color: white;
+    box-shadow: 0 16px 28px rgba(15, 118, 110, 0.24);
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.56);
+    color: var(--ink);
+    border: 1px solid var(--line);
+  }
+
+  .hero {
+    padding: 54px 0 40px;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 28px;
+    align-items: stretch;
+  }
+
+  .hero-copy,
+  .hero-demo {
+    background: var(--panel);
+    border: 1px solid rgba(29, 43, 42, 0.08);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+  }
+
+  .hero-copy {
+    padding: 34px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    background: rgba(15, 118, 110, 0.08);
+    border: 1px solid rgba(15, 118, 110, 0.14);
+    border-radius: 999px;
+    color: var(--brand-deep);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  .eyebrow::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(2.6rem, 6vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.04em;
+  }
+
+  .gradient {
+    background: linear-gradient(135deg, var(--brand-deep), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-copy p {
+    margin: 18px 0 0;
+    max-width: 640px;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.75;
+  }
+
+  .hero-points {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin: 26px 0;
+  }
+
+  .hero-point {
+    padding: 14px;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.58);
+    border: 1px solid rgba(29, 43, 42, 0.08);
+    font-size: 0.95rem;
+    color: var(--ink);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+  }
+
+  .proof-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 28px;
+  }
+
+  .proof-card {
+    padding: 18px;
+    border-radius: var(--radius-md);
+    background: rgba(19, 78, 74, 0.94);
+    color: white;
+  }
+
+  .proof-card strong {
+    display: block;
+    font-size: 2rem;
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  .proof-card span {
+    display: block;
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.92rem;
+  }
+
+  .hero-demo {
+    padding: 24px;
+    display: grid;
+    gap: 18px;
+    background:
+      linear-gradient(180deg, rgba(255, 250, 241, 0.96), rgba(247, 240, 226, 0.94));
+  }
+
+  .demo-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: start;
+  }
+
+  .demo-header h2 {
+    margin: 0;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: 1.35rem;
+  }
+
+  .demo-header p {
+    margin: 6px 0 0;
+    color: var(--muted);
+    font-size: 0.94rem;
+    line-height: 1.6;
+  }
+
+  .demo-badge {
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: #9a3412;
+    font-weight: 700;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .demo-form {
+    display: grid;
+    gap: 12px;
+  }
+
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field label {
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: var(--brand-deep);
+  }
+
+  .field input,
+  .field select {
+    width: 100%;
+    border: 1px solid rgba(29, 43, 42, 0.12);
+    background: white;
+    padding: 14px 15px;
+    border-radius: 14px;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .field input:focus,
+  .field select:focus {
+    border-color: rgba(15, 118, 110, 0.45);
+    box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+  }
+
+  .quick-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .quick-chip {
+    border: 1px solid rgba(29, 43, 42, 0.1);
+    background: rgba(255, 255, 255, 0.8);
+    color: var(--ink);
+    border-radius: 999px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  .chat {
+    min-height: 320px;
+    max-height: 360px;
+    overflow: auto;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid rgba(29, 43, 42, 0.08);
+    padding: 16px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .message {
+    max-width: 88%;
+    padding: 12px 14px;
+    border-radius: 16px;
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .message.user {
+    justify-self: end;
+    background: rgba(15, 118, 110, 0.12);
+  }
+
+  .message.agent {
+    justify-self: start;
+    background: rgba(217, 119, 6, 0.12);
+  }
+
+  .demo-input {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+  }
+
+  .demo-note {
+    color: var(--muted);
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+
+  .section {
+    padding: 28px 0;
+  }
+
+  .section-title {
+    max-width: 760px;
+    margin-bottom: 24px;
+  }
+
+  .section-title span {
+    display: inline-block;
+    font-size: 0.84rem;
+    font-weight: 800;
+    color: var(--brand-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 12px;
+  }
+
+  .section-title h3 {
+    margin: 0;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.03;
+    letter-spacing: -0.03em;
+  }
+
+  .section-title p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    line-height: 1.8;
+    font-size: 1rem;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .feature-card,
+  .use-card,
+  .stack-card,
+  .faq-item,
+  .pricing-card,
+  .story-card {
+    padding: 22px;
+    border-radius: var(--radius-lg);
+    background: var(--panel);
+    border: 1px solid rgba(29, 43, 42, 0.08);
+    box-shadow: var(--shadow);
+  }
+
+  .feature-card strong,
+  .use-card strong,
+  .stack-card strong,
+  .pricing-card strong,
+  .story-card strong {
+    display: block;
+    font-size: 1.18rem;
+    margin-bottom: 10px;
+  }
+
+  .feature-card p,
+  .use-card p,
+  .stack-card p,
+  .pricing-card p,
+  .story-card p,
+  .faq-item p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .feature-kicker {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.08);
+    color: var(--brand-deep);
+    font-size: 0.78rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .use-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .use-card {
+    min-height: 170px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,0.92), rgba(254, 246, 231, 0.92));
+  }
+
+  .use-card .mini {
+    color: #9a3412;
+    font-size: 0.82rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .story-grid,
+  .pricing-grid,
+  .faq-grid,
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .story-stat {
+    display: inline-flex;
+    margin-top: 16px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--brand-deep);
+    font-weight: 800;
+  }
+
+  .pricing-card.featured {
+    background: linear-gradient(180deg, rgba(19, 78, 74, 0.98), rgba(15, 118, 110, 0.98));
+    color: white;
+  }
+
+  .pricing-card.featured p,
+  .pricing-card.featured .price-sub {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .price {
+    display: flex;
+    align-items: end;
+    gap: 8px;
+    margin: 16px 0 10px;
+  }
+
+  .price b {
+    font-size: 3rem;
+    line-height: 1;
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  .price-sub {
+    font-size: 0.92rem;
+    color: var(--muted);
+  }
+
+  .pricing-list {
+    display: grid;
+    gap: 10px;
+    margin: 18px 0 22px;
+  }
+
+  .pricing-list div {
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.56);
+    color: var(--ink);
+  }
+
+  .pricing-card.featured .pricing-list div {
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+  }
+
+  .faq-item h4 {
+    margin: 0 0 8px;
+    font-size: 1.02rem;
+  }
+
+  .lead-section {
+    display: grid;
+    grid-template-columns: 0.95fr 1.05fr;
+    gap: 18px;
+    margin-top: 10px;
+  }
+
+  .lead-panel,
+  .visual-panel {
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    background: var(--panel);
+    border: 1px solid rgba(29, 43, 42, 0.08);
+    box-shadow: var(--shadow);
+  }
+
+  .lead-panel h4,
+  .visual-panel h4 {
+    margin: 0 0 8px;
+    font-size: 1.25rem;
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  .lead-panel p,
+  .visual-panel p {
+    margin: 0 0 16px;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .lead-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .lead-form .field.full {
+    grid-column: 1 / -1;
+  }
+
+  .status-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(15, 118, 110, 0.08);
+    color: var(--brand-deep);
+    font-weight: 600;
+    line-height: 1.6;
+    min-height: 24px;
+  }
+
+  .mock-ui {
+    display: grid;
+    gap: 12px;
+  }
+
+  .mock-card {
+    padding: 14px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,246,230,0.92));
+    border: 1px solid rgba(29, 43, 42, 0.08);
+  }
+
+  .mock-card strong {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .mock-card span {
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.65;
+  }
+
+  .cta-banner {
+    margin: 32px 0 64px;
+    padding: 30px;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(135deg, #134e4a, #0f766e);
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    align-items: center;
+    box-shadow: 0 24px 60px rgba(15, 118, 110, 0.24);
+  }
+
+  .cta-banner h3 {
+    margin: 0;
+    font-family: "Space Grotesk", sans-serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.02;
+  }
+
+  .cta-banner p {
+    margin: 10px 0 0;
+    max-width: 660px;
+    color: rgba(255,255,255,0.84);
+    line-height: 1.8;
+  }
+
+  .footer {
+    padding: 0 0 46px;
+    color: var(--muted);
+    font-size: 0.92rem;
+  }
+
+  .sticky-cta {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    transform: translateX(-50%);
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: rgba(19, 78, 74, 0.94);
+    color: white;
+    box-shadow: 0 18px 40px rgba(19, 78, 74, 0.28);
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .sticky-cta span {
+    font-size: 0.92rem;
+    color: rgba(255,255,255,0.82);
+    white-space: nowrap;
+  }
+
+  .sticky-cta .btn {
+    padding: 11px 16px;
+  }
+
+  .modal-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    background: rgba(17, 24, 23, 0.48);
+    backdrop-filter: blur(10px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .modal-shell.visible {
+    display: flex;
+  }
+
+  .modal-card {
+    width: min(520px, 100%);
+    padding: 28px;
+    border-radius: 28px;
+    background: #fffaf1;
+    border: 1px solid rgba(29, 43, 42, 0.08);
+    box-shadow: 0 28px 70px rgba(26, 31, 28, 0.18);
+  }
+
+  .modal-pill {
+    display: inline-flex;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(15, 118, 110, 0.1);
+    color: var(--brand-deep);
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .modal-card h4 {
+    margin: 14px 0 8px;
+    font-size: 1.8rem;
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  .modal-card p {
+    margin: 0;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-card {
+    border-top: 1px solid rgba(29, 43, 42, 0.1);
+    padding-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  @media (max-width: 1100px) {
+    .hero-grid,
+    .grid-3,
+    .story-grid,
+    .pricing-grid,
+    .faq-grid,
+    .stack-grid,
+    .lead-section {
+      grid-template-columns: 1fr;
+    }
+
+    .proof-row,
+    .use-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cta-banner,
+    .footer-card {
+      flex-direction: column;
+      align-items: start;
+    }
+  }
+
+  @media (max-width: 780px) {
+    .topbar-inner,
+    .nav,
+    .cta-row,
+    .hero-actions,
+    .demo-input {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .nav {
+      display: none;
+    }
+
+    .topbar-inner {
+      padding: 14px 0;
+    }
+
+    .hero {
+      padding-top: 26px;
+    }
+
+    .hero-copy,
+    .hero-demo {
+      padding: 22px;
+    }
+
+    .hero-points,
+    .proof-row,
+    .use-grid,
+    .lead-form {
+      grid-template-columns: 1fr;
+    }
+
+    .shell {
+      width: min(100% - 20px, 1200px);
+    }
+
+    .sticky-cta {
+      width: calc(100% - 20px);
+      justify-content: space-between;
+      border-radius: 22px;
+      padding: 12px;
+    }
+
+    .sticky-cta span {
+      white-space: normal;
+      font-size: 0.84rem;
+      max-width: 52%;
+    }
+  }
+</style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <a class="brand" href="#top">
+        <div class="brand-mark">VN</div>
+        <div class="brand-copy">
+          <strong>VoiceNova</strong>
+          <span>AI calling agents for sales, support, HR, and ops</span>
+        </div>
+      </a>
+      <nav class="nav">
+        <a href="#features">Platform</a>
+        <a href="#use-cases">Use Cases</a>
+        <a href="#stories">Results</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="cta-row">
+        <a class="btn btn-secondary" href="/admin/index.html">Admin Panel</a>
+        <a class="btn btn-primary" href="#demo">Try Demo</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div class="hero-copy">
+          <div class="eyebrow">Live AI call center demo for your business</div>
+          <h1>Launch a <span class="gradient">human-sounding AI caller</span> that books, follows up, hires, reminds, and resolves.</h1>
+          <p>
+            VoiceNova turns your inbound and outbound calling workflows into AI-operated conversations.
+            Run interview screening, salary notifications, attendance checks, privacy-policy updates,
+            support callbacks, and lead qualification from one platform.
+          </p>
+
+          <div class="hero-points">
+            <div class="hero-point">Outbound campaigns with dynamic prompts and branching logic</div>
+            <div class="hero-point">Inbound voice agent with multilingual handling and escalation</div>
+            <div class="hero-point">Admin console, call history, HR workflows, and contact memory</div>
+            <div class="hero-point">Website demo experience so prospects can test before they buy</div>
+          </div>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#demo">Test VoiceNova Now</a>
+            <a class="btn btn-secondary" href="#pricing">See Pricing</a>
+          </div>
+
+          <div class="proof-row">
+            <div class="proof-card">
+              <strong>20+</strong>
+              <span>languages already supported in the platform flow</span>
+            </div>
+            <div class="proof-card">
+              <strong>1</strong>
+              <span>admin panel to manage calls, contacts, HR scripts, and training</span>
+            </div>
+            <div class="proof-card">
+              <strong>Real-time</strong>
+              <span>call handling with debug traces, prompt control, and transfer paths</span>
+            </div>
+            <div class="proof-card">
+              <strong>Self-learning</strong>
+              <span>memory from calls, saved contacts, FAQs, and knowledge updates</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-demo" id="demo">
+          <div class="demo-header">
+            <div>
+              <h2>Interactive Demo</h2>
+              <p>Start a browser demo session and talk to the same backend logic that powers the calling agent.</p>
+            </div>
+            <div class="demo-badge">No Twilio needed</div>
+          </div>
+
+          <div class="demo-form">
+            <div class="field">
+              <label for="demoUseCase">Use case</label>
+              <select id="demoUseCase">
+                <option value="support">Customer Support</option>
+                <option value="hr">HR and Recruitment</option>
+                <option value="collections">Collections and Reminders</option>
+                <option value="sales">Lead Qualification</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="demoLanguage">Language</label>
+              <select id="demoLanguage">
+                <option value="hi-IN">Hindi</option>
+                <option value="en-IN">English</option>
+                <option value="en-US">English (US)</option>
+              </select>
+            </div>
+            <div class="quick-actions">
+              <button class="quick-chip" type="button" data-prompt="Mujhe product pricing ke baare mein batao.">Pricing question</button>
+              <button class="quick-chip" type="button" data-prompt="I want to schedule a product demo for my team.">Book a demo</button>
+              <button class="quick-chip" type="button" data-prompt="What details do you need for HR attendance calling?">HR attendance</button>
+            </div>
+          </div>
+
+          <div class="chat" id="chatBox">
+            <div class="message agent">Choose a use case and click <strong>Start Demo</strong>. I will open a live test session against the VoiceNova backend.</div>
+          </div>
+
+          <div class="demo-input">
+            <input id="demoMessage" type="text" placeholder="Type a question for the AI calling agent">
+            <button class="btn btn-primary" id="startDemoBtn" type="button">Start Demo</button>
+          </div>
+          <div class="demo-input">
+            <button class="btn btn-secondary" id="sendDemoBtn" type="button">Send Message</button>
+            <button class="btn btn-secondary" id="endDemoBtn" type="button">End Session</button>
+          </div>
+
+          <div class="demo-note">
+            This uses the built-in test conversation API. If your backend is running, visitors can try the assistant instantly from the website.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="features">
+      <div class="shell">
+        <div class="section-title">
+          <span>Platform</span>
+          <h3>Everything you need to sell, operate, and improve an AI call center product.</h3>
+          <p>
+            Built for teams that need more than a chatbot. VoiceNova combines telephony, prompt control, live monitoring,
+            HR-specific flows, contact memory, and knowledge-based answers in one deployable stack.
+          </p>
+        </div>
+
+        <div class="grid-3">
+          <article class="feature-card">
+            <div class="feature-kicker">Operations</div>
+            <strong>Campaign dialing and admin controls</strong>
+            <p>Start single or batch outbound calls, track live sessions, inspect call traces, and intervene with supervised transfer controls.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-kicker">Conversation</div>
+            <strong>Knowledge-aware AI responses</strong>
+            <p>Train the agent on FAQs, policy notes, product content, and company docs so it speaks with real business context instead of generic filler.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-kicker">Memory</div>
+            <strong>Contact recall and repeat-call personalization</strong>
+            <p>Store contact details, learn names from conversations, reuse preferred language, and greet repeat recipients naturally on later calls.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-kicker">HR</div>
+            <strong>Interview, salary, attendance, and policy workflows</strong>
+            <p>Run specialized calling flows for recruitment and employee communication with structured scenario data instead of one generic script.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-kicker">Trust</div>
+            <strong>Debug traces and call history</strong>
+            <p>Review transcripts, inspect the decision path, check prompt context, and audit outcomes when you need to improve performance fast.</p>
+          </article>
+          <article class="feature-card">
+            <div class="feature-kicker">Growth</div>
+            <strong>Demo-ready website and product story</strong>
+            <p>Give prospects a direct way to test the product from your landing page, shorten sales cycles, and make the platform easier to buy.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="use-cases">
+      <div class="shell">
+        <div class="section-title">
+          <span>Use Cases</span>
+          <h3>Sell VoiceNova across teams, not just one department.</h3>
+          <p>Position the same core platform for revenue, support, HR, and operations teams with use-case specific messaging and workflows.</p>
+        </div>
+
+        <div class="use-grid">
+          <article class="use-card">
+            <div class="mini">Sales</div>
+            <strong>Lead qualification</strong>
+            <p>Capture intent, qualify demand, and route warm leads faster than a manual calling queue.</p>
+          </article>
+          <article class="use-card">
+            <div class="mini">HR</div>
+            <strong>Interview screening</strong>
+            <p>Run first-round candidate collection, ask dynamic questions, and save candidate details automatically.</p>
+          </article>
+          <article class="use-card">
+            <div class="mini">HR</div>
+            <strong>Attendance calling</strong>
+            <p>Ask for today’s attendance, record present or absent, and close the loop without admin effort.</p>
+          </article>
+          <article class="use-card">
+            <div class="mini">Finance</div>
+            <strong>Salary notifications</strong>
+            <p>Notify employees when salary is credited, mention the amount, and personalize the message with name recall.</p>
+          </article>
+          <article class="use-card">
+            <div class="mini">Legal</div>
+            <strong>Policy updates</strong>
+            <p>Explain privacy-policy or compliance changes with a configured summary and answer follow-up questions.</p>
+          </article>
+          <article class="use-card">
+            <div class="mini">Support</div>
+            <strong>Dynamic FAQ calling</strong>
+            <p>Handle custom “other” scenarios with editable FAQs and evolving knowledge from past conversations.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="stories">
+      <div class="shell">
+        <div class="section-title">
+          <span>Results Story</span>
+          <h3>Designed to feel like a deployable product, not just a lab demo.</h3>
+          <p>
+            This landing page is aimed at buyers who want proof that the system can manage real calling operations,
+            not only a chatbot embedded in a browser.
+          </p>
+        </div>
+
+        <div class="story-grid">
+          <article class="story-card">
+            <strong>For startups selling AI automation</strong>
+            <p>Use this page as your main conversion surface: explain the categories, show live product depth, and let the visitor test the agent before talking to sales.</p>
+            <div class="story-stat">Faster trust building</div>
+          </article>
+          <article class="story-card">
+            <strong>For service teams replacing repetitive calling</strong>
+            <p>Show how VoiceNova handles reminder calls, candidate outreach, support callbacks, and scripted notifications while still keeping a human escalation path.</p>
+            <div class="story-stat">Lower manual call load</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="shell">
+        <div class="section-title">
+          <span>Stack Fit</span>
+          <h3>A website pitch that maps directly to the product you already have.</h3>
+          <p>This demo site reflects the current backend and admin capabilities in this repo instead of promising imaginary features.</p>
+        </div>
+
+        <div class="stack-grid">
+          <article class="stack-card">
+            <strong>Website demo experience</strong>
+            <p>Visitors can start a backend-powered test chat from this page using your existing `/api/v1/test/*` routes.</p>
+          </article>
+          <article class="stack-card">
+            <strong>Admin-driven real calls</strong>
+            <p>Sales teams can move from website demo to full admin dialing, campaign setup, contact management, and HR automation.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="pricing">
+      <div class="shell">
+        <div class="section-title">
+          <span>Pricing Direction</span>
+          <h3>Simple packaging for demos, pilots, and full deployment.</h3>
+          <p>You can tune the numbers later, but this structure gives prospects a clear buying path right away.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <article class="pricing-card">
+            <strong>Starter</strong>
+            <p>Best for founders and small teams validating AI calling.</p>
+            <div class="price"><b>₹7k</b><span class="price-sub">/ month</span></div>
+            <div class="pricing-list">
+              <div>Single agent configuration</div>
+              <div>Test website demo</div>
+              <div>Basic call history and analytics</div>
+              <div>Email support</div>
+            </div>
+            <a class="btn btn-secondary" href="#demo">Start Testing</a>
+          </article>
+
+          <article class="pricing-card featured">
+            <strong>Growth</strong>
+            <p>For teams running outbound campaigns, HR automation, and multilingual support.</p>
+            <div class="price"><b>Custom</b><span class="price-sub">pilot + usage</span></div>
+            <div class="pricing-list">
+              <div>Outbound and inbound calling setup</div>
+              <div>HR workflows and structured scenarios</div>
+              <div>Contact memory and dynamic FAQs</div>
+              <div>Knowledge training and admin onboarding</div>
+            </div>
+            <a class="btn btn-primary" href="/admin/index.html">Open Product</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="lead-demo">
+      <div class="shell">
+        <div class="section-title">
+          <span>Book Demo</span>
+          <h3>Capture a lead and request a callback directly from the website.</h3>
+          <p>This gives you a practical sales flow: save the prospect, tag the use case, and optionally trigger an outbound follow-up call from VoiceNova.</p>
+        </div>
+
+        <div class="lead-section">
+          <article class="lead-panel">
+            <h4>Request a personalized demo</h4>
+            <p>We’ll save the prospect into VoiceNova contacts and, if requested, trigger a callback using your existing outbound calling flow.</p>
+
+            <form class="lead-form" id="leadForm">
+              <div class="field">
+                <label for="leadName">Name</label>
+                <input id="leadName" type="text" placeholder="Amit Sharma">
+              </div>
+              <div class="field">
+                <label for="leadPhone">Phone</label>
+                <input id="leadPhone" type="text" placeholder="+919876543210">
+              </div>
+              <div class="field">
+                <label for="leadEmail">Email</label>
+                <input id="leadEmail" type="email" placeholder="amit@company.com">
+              </div>
+              <div class="field">
+                <label for="leadLanguage">Preferred Language</label>
+                <select id="leadLanguage">
+                  <option value="hi-IN">Hindi</option>
+                  <option value="en-IN">English</option>
+                  <option value="en-US">English (US)</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="leadUseCase">Primary Use Case</label>
+                <select id="leadUseCase">
+                  <option value="Lead Qualification">Lead Qualification</option>
+                  <option value="HR Automation">HR Automation</option>
+                  <option value="Attendance Calling">Attendance Calling</option>
+                  <option value="Salary Notifications">Salary Notifications</option>
+                  <option value="Customer Support">Customer Support</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="leadDepartment">Team</label>
+                <input id="leadDepartment" type="text" placeholder="Sales / HR / Operations">
+              </div>
+              <div class="field full">
+                <label for="leadNotes">What should the demo focus on?</label>
+                <input id="leadNotes" type="text" placeholder="Example: multilingual recruitment calls with admin control">
+              </div>
+              <div class="field full">
+                <div class="cta-row">
+                  <button class="btn btn-secondary" type="button" id="saveLeadBtn">Save Lead</button>
+                  <button class="btn btn-primary" type="button" id="callbackLeadBtn">Request Callback</button>
+                </div>
+              </div>
+            </form>
+
+            <div class="status-box" id="leadStatus">No action yet.</div>
+          </article>
+
+          <aside class="visual-panel">
+            <h4>What happens after submit</h4>
+            <p>The flow is designed to feel productized for prospects and still map cleanly to the backend you already have.</p>
+            <div class="mock-ui">
+              <div class="mock-card">
+                <strong>1. Prospect saved to contacts</strong>
+                <span>Name, phone, language, notes, and use-case tags are stored in the contact memory layer.</span>
+              </div>
+              <div class="mock-card">
+                <strong>2. Demo intent tagged</strong>
+                <span>The lead gets tagged for the relevant workflow like HR, support, salary, or lead qualification.</span>
+              </div>
+              <div class="mock-card">
+                <strong>3. Optional callback triggered</strong>
+                <span>VoiceNova can start an outbound follow-up call using the current calling backend and log it in the product.</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="shell">
+        <div class="section-title">
+          <span>FAQ</span>
+          <h3>What buyers usually want to know before they book.</h3>
+        </div>
+
+        <div class="faq-grid">
+          <article class="faq-item">
+            <h4>Can users actually test the AI from this website?</h4>
+            <p>Yes. This page uses the backend test conversation API so visitors can try a live agent session directly in the browser.</p>
+          </article>
+          <article class="faq-item">
+            <h4>Can the same platform handle multiple business flows?</h4>
+            <p>Yes. VoiceNova can be positioned for support, HR, attendance, salary updates, policy notifications, and dynamic FAQ scenarios.</p>
+          </article>
+          <article class="faq-item">
+            <h4>Does it remember returning contacts?</h4>
+            <p>Yes. The platform now supports contact details, preferred language, attendance memory, last-call summary, and repeat-name greeting behavior.</p>
+          </article>
+          <article class="faq-item">
+            <h4>Can we customize prompts and knowledge without code changes?</h4>
+            <p>Yes. The admin system already supports training content, HR scenario setup, and knowledge-based prompt building.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="shell">
+      <div class="cta-banner">
+        <div>
+          <h3>Ready to sell VoiceNova like a real product?</h3>
+          <p>Use this page as your public demo website, guide visitors into a browser test, then move qualified prospects into the admin panel or a live outbound pilot.</p>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-secondary" href="/admin/index.html">Open Admin</a>
+          <a class="btn btn-primary" href="#demo">Run Demo</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell footer-card">
+      <div>VoiceNova AI calling platform for outbound, inbound, HR, and operational automation.</div>
+      <div>Built on your local VoiceNova backend and website demo flow.</div>
+    </div>
+  </footer>
+
+  <div class="sticky-cta">
+    <span>Want a faster walkthrough? Save your number and let VoiceNova call back.</span>
+    <a class="btn btn-primary" href="#lead-demo">Book Demo</a>
+  </div>
+
+  <div class="modal-shell" id="successModal">
+    <div class="modal-card">
+      <div class="modal-pill">Lead Captured</div>
+      <h4 id="successTitle">Your demo request is ready.</h4>
+      <p id="successText">We saved your details successfully.</p>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="closeSuccessBtn" type="button">Continue</button>
+        <a class="btn btn-secondary" href="/admin/index.html">Open Admin</a>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const chatBox = document.getElementById("chatBox");
+  const demoMessage = document.getElementById("demoMessage");
+  const demoUseCase = document.getElementById("demoUseCase");
+  const demoLanguage = document.getElementById("demoLanguage");
+  const startDemoBtn = document.getElementById("startDemoBtn");
+  const sendDemoBtn = document.getElementById("sendDemoBtn");
+  const endDemoBtn = document.getElementById("endDemoBtn");
+  const leadStatus = document.getElementById("leadStatus");
+  const saveLeadBtn = document.getElementById("saveLeadBtn");
+  const callbackLeadBtn = document.getElementById("callbackLeadBtn");
+  const successModal = document.getElementById("successModal");
+  const successTitle = document.getElementById("successTitle");
+  const successText = document.getElementById("successText");
+  const closeSuccessBtn = document.getElementById("closeSuccessBtn");
+  let sessionId = null;
+
+  function appendMessage(role, text) {
+    const item = document.createElement("div");
+    item.className = `message ${role}`;
+    item.innerHTML = text;
+    chatBox.appendChild(item);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+
+  function setBusy(isBusy) {
+    startDemoBtn.disabled = isBusy;
+    sendDemoBtn.disabled = isBusy;
+    endDemoBtn.disabled = isBusy;
+  }
+
+  function leadPayload() {
+    return {
+      name: document.getElementById("leadName").value.trim(),
+      phone: document.getElementById("leadPhone").value.trim(),
+      email: document.getElementById("leadEmail").value.trim(),
+      language: document.getElementById("leadLanguage").value,
+      useCase: document.getElementById("leadUseCase").value,
+      department: document.getElementById("leadDepartment").value.trim(),
+      notes: document.getElementById("leadNotes").value.trim()
+    };
+  }
+
+  function setLeadStatus(text) {
+    leadStatus.textContent = text;
+  }
+
+  function showSuccess(title, text) {
+    successTitle.textContent = title;
+    successText.textContent = text;
+    successModal.classList.add("visible");
+  }
+
+  function hideSuccess() {
+    successModal.classList.remove("visible");
+  }
+
+  async function startDemo() {
+    try {
+      setBusy(true);
+      const purpose = demoUseCase.value;
+      const language = demoLanguage.value;
+      const response = await fetch("/api/v1/test/conversation", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          language,
+          caller_number: "+919999999999",
+          purpose
+        })
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      sessionId = data.session_id;
+      appendMessage("agent", `<strong>${data.agent_name}:</strong> ${data.agent_greeting}`);
+    } catch (error) {
+      appendMessage("agent", `Could not start demo session. ${error.message || "Please make sure the backend is running."}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function sendMessage() {
+    const text = demoMessage.value.trim();
+    if (!text) return;
+    if (!sessionId) {
+      appendMessage("agent", "Start the demo first so I can open a session.");
+      return;
+    }
+    appendMessage("user", text);
+    demoMessage.value = "";
+    try {
+      setBusy(true);
+      const response = await fetch("/api/v1/test/message", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          message: text
+        })
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      appendMessage("agent", `<strong>Agent:</strong> ${data.agent_reply}`);
+    } catch (error) {
+      appendMessage("agent", `The demo could not reply. ${error.message || ""}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function endDemo() {
+    if (!sessionId) return;
+    try {
+      setBusy(true);
+      await fetch("/api/v1/test/end", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          session_id: sessionId,
+          quality_score: 4.5
+        })
+      });
+      appendMessage("agent", "Demo session ended. Start another one any time.");
+      sessionId = null;
+    } catch (error) {
+      appendMessage("agent", "I could not close the demo session cleanly, but you can still start a new one.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveLead() {
+    const lead = leadPayload();
+    if (!lead.phone) {
+      setLeadStatus("Enter a phone number before saving the lead.");
+      return null;
+    }
+    try {
+      setLeadStatus("Saving lead to VoiceNova contacts...");
+      const response = await fetch("/api/v1/hr/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone_number: lead.phone,
+          name: lead.name || null,
+          email: lead.email || null,
+          department: lead.department || null,
+          designation: "Website Demo Lead",
+          preferred_language: lead.language,
+          company: null,
+          notes: lead.notes || `Interested in ${lead.useCase}`,
+          tags: ["website-demo", lead.useCase.toLowerCase().replace(/\s+/g, "-")]
+        })
+      });
+      if (!response.ok) throw new Error(await response.text());
+      setLeadStatus("Lead saved successfully. You can now request a callback.");
+      showSuccess("Lead saved", "The prospect was added to VoiceNova contacts and is ready for follow-up.");
+      return lead;
+    } catch (error) {
+      setLeadStatus(`Could not save lead: ${error.message || "unknown error"}`);
+      return null;
+    }
+  }
+
+  async function requestCallback() {
+    const lead = await saveLead();
+    if (!lead) return;
+    try {
+      setLeadStatus("Triggering callback request...");
+      const response = await fetch("/api/v1/calls/outbound", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: lead.phone,
+          language: lead.language,
+          contact_name: lead.name || null,
+          contact_email: lead.email || null,
+          contact_department: lead.department || null,
+          contact_designation: "Website Demo Lead",
+          contact_notes: lead.notes || `Requested callback for ${lead.useCase}`,
+          contact_tags: ["website-demo", "callback-request", lead.useCase.toLowerCase().replace(/\s+/g, "-")]
+        })
+      });
+      if (!response.ok) throw new Error(await response.text());
+      const data = await response.json();
+      setLeadStatus(`Callback requested successfully. Call status: ${data.status || "initiated"} for ${data.to || lead.phone}.`);
+      showSuccess("Callback requested", `VoiceNova has queued a follow-up call for ${data.to || lead.phone}.`);
+    } catch (error) {
+      setLeadStatus(`Lead saved, but callback could not start: ${error.message || "unknown error"}`);
+    }
+  }
+
+  startDemoBtn.addEventListener("click", startDemo);
+  sendDemoBtn.addEventListener("click", sendMessage);
+  endDemoBtn.addEventListener("click", endDemo);
+  demoMessage.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      sendMessage();
+    }
+  });
+
+  document.querySelectorAll("[data-prompt]").forEach((button) => {
+    button.addEventListener("click", () => {
+      demoMessage.value = button.getAttribute("data-prompt") || "";
+      demoMessage.focus();
+    });
+  });
+
+  saveLeadBtn.addEventListener("click", saveLead);
+  callbackLeadBtn.addEventListener("click", requestCallback);
+  closeSuccessBtn.addEventListener("click", hideSuccess);
+  successModal.addEventListener("click", (event) => {
+    if (event.target === successModal) hideSuccess();
+  });
+</script>
+</body>
+</html>
